@@ -1,6 +1,6 @@
 # Building a Full-Text Search App Using Docker and Elasticsearch on CentOS
 
-This repository is based on this [tutorial](https://blog.patricktriest.com/text-search-docker-elasticsearch/) by Patrick Triest.
+This repository is based on this [tutorial](https://blog.patricktriest.com/text-search-docker-elasticsearch/) by Patrick Triest. See also [elasticsearch-docker](https://github.com/mpolinowski/elasticsearch-docker).
 
 <!-- TOC -->
 
@@ -269,10 +269,13 @@ app.use(async (ctx, next) => {
 
 const port = process.env.PORT || 3000
 
-app.listen(port, err => {
-  if (err) console.error(err)
-  console.log(`App Listening on Port ${port}`)
-})
+app
+  .use(router.routes())
+  .use(router.allowedMethods())
+  .listen(port, err => {
+    if (err) console.error(err)
+    console.log(`App Listening on Port ${port}`)
+  })
 ```
 
 
@@ -343,7 +346,7 @@ const elasticsearch = require('elasticsearch')
 
 // Core ES variables for this project
 const index = 'library'
-const type = 'novel'
+const type = 'book'
 const port = 9200
 const host = process.env.ES_HOST || 'localhost'
 const client = new elasticsearch.Client({ host: { host, port } })
@@ -846,7 +849,7 @@ const vm = new Vue ({
     },
     /** Call API to search for inputted term */
     async search () {
-      const response = await axios.get(`${this.baseUrl}/search`, { params: { term: this.searchTerm, offset: t$
+      const response = await axios.get(`${this.baseUrl}/search`, { params: { term: this.searchTerm, offset: this.searchOffset } })
       this.numHits = response.data.hits.total
       return response.data.hits.hits
     },
